@@ -1,4 +1,5 @@
 # Commandante
+[![Build Status](https://snap-ci.com/endockin/commandante/branch/master/build_image)](https://snap-ci.com/endockin/commandante/branch/master)
 
 ## Requirements
 
