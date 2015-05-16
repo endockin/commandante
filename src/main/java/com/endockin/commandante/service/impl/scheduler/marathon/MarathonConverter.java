@@ -9,28 +9,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class MarathonConverter {
 
-  private enum MarathonContainerTypes {
-    DOCKER("DOCKER"), MESOS("MESOS");
-
-    private String name;
-
-    MarathonContainerTypes(String name) {
-      this.name = name;
-    }
-
-    public String getName() {
-      return name;
-    }
-  }
-
   public Ship getShip(AppDto app) {
     Ship ship = null;
 
     String containerType = app.getContainer().getType();
-    if (MarathonContainerTypes.DOCKER.getName().equals(containerType)) {
+    if (DockerShip.SHIP_TYPE.equals(containerType)) {
       ship = new DockerShip(app.getId());
     }
-    else if (MarathonContainerTypes.MESOS.getName().equals(containerType)){
+    else if (DockerShip.SHIP_TYPE.equals(containerType)){
       ship = new MesosShip(app.getId());
     }
 
