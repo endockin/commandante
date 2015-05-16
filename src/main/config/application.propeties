@@ -1,0 +1,3 @@
+logging.level.=DEBUG
+logging.level.com.endockin: TRACE
+logging.level.com.fasterxml.jackson: DEBUG

@@ -1,24 +1,50 @@
 buildscript {
-  repositories {
-    mavenCentral()
-  }
+    repositories {
+        mavenCentral()
+    }
 
-  dependencies {
-    classpath group: "net.carlosgsouza", name: "gradle-console", version: "1.+"
-  }
+    dependencies {
+classpath "org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE"  
+classpath 'org.springframework:springloaded:1.2.3.RELEASE'
+    }
 }
 
 apply plugin: "java"
 apply plugin: "application"
-apply plugin: "checkstyle"
-apply plugin: "console"
+apply plugin: "spring-boot"
+apply plugin: "idea"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
-  mavenCentral()
+    jcenter()
+    mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
-  testCompile group: "junit", name: "junit", version: "4.+"
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("com.fasterxml.jackson.core:jackson-databind")
+
+    testCompile group: "junit", name: "junit", version: "4.+"
 }
 
-mainClassName = "com.endockin.commandante.Main"
+mainClassName = "com.endockin.commandante.Application"
+
+jar {
+    baseName = "com.endockin.commandante"
+    version =  "0.1.0"
+}
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = file("$buildDir/classes/main/")
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
