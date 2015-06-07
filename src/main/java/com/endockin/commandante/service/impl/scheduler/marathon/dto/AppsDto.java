@@ -6,13 +6,8 @@ import java.util.List;
 
 public class AppsDto {
 
-    
     @JsonProperty("apps")
     private List<MarathonApp> marathonApps;
-
-    public AppsDto() {
-
-    }
 
     public List<MarathonApp> getMarathonApps() {
         return marathonApps;

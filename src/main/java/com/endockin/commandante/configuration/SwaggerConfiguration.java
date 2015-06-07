@@ -14,22 +14,23 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
-
+    
     @Bean
     public Docket petApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("commandante-api")
                 .apiInfo(apiInfo())
                 .select()
+                .paths(paths())
                 .build();
     }
-
+    
     private Predicate<String> paths() {
         return or(
-                regex(".*com/.*/endockin/.*resource/.*")
+                regex("/api/.*")
         );
     }
-
+    
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Commandante API Documentation")

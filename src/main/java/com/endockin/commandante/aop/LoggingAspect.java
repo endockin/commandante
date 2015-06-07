@@ -17,7 +17,7 @@ public class LoggingAspect {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Pointcut("within(com.endockin.commandante.resource..*)")
+    @Pointcut("within(com.endockin.commandante.resource..*) || within(com.endockin.commandante.service..*)")
     public void loggingPointcut() {
     }
 

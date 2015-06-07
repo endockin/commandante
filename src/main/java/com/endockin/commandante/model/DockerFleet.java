@@ -1,15 +1,14 @@
 package com.endockin.commandante.model;
 
-public class DockerShip extends Ship {
+public class DockerFleet extends Fleet {
 
-    public static final String SHIP_TYPE = "DOCKER";
+    public static final String FLEET_TYPE = "DOCKER";
 
     private String image;
 
-
     @Override
     public String getType() {
-        return SHIP_TYPE;
+        return FLEET_TYPE;
     }
 
     public String getImage() {
@@ -22,8 +21,7 @@ public class DockerShip extends Ship {
 
     @Override
     public String toString() {
-        return "DockerShip{"
-                + "image='" + image + '\''
-                + "} " + super.toString();
+        return "DockerFleet{" + "image=" + image + ", " + super.toString() + '}';
     }
+
 }

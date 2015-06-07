@@ -1,16 +1,24 @@
-package com.endockin.commandante.model;
+package com.endockin.commandante.service.impl.scheduler.marathon.dto.internal;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 import java.util.List;
 
-public class Ship {
+public class MarathonTask {
 
+    @JsonProperty("appId")
     private String appId;
+    @JsonProperty("host")
     private String host;
+    @JsonProperty("id")
     private String id;
+    @JsonProperty("ports")
     private List<Integer> ports;
+    @JsonProperty("stagedAt")
     private Date stagedAt;
+    @JsonProperty("startedAt")
     private Date startedAt;
+    @JsonProperty("version")
     private Date version;
 
     public String getAppId() {
@@ -71,7 +79,7 @@ public class Ship {
 
     @Override
     public String toString() {
-        return "Ship{" + "appId=" + appId + ", host=" + host + ", id=" + id + ", ports=" + ports + ", stagedAt=" + stagedAt + ", startedAt=" + startedAt + ", version=" + version + '}';
+        return "MarathonTask{" + "appId=" + appId + ", host=" + host + ", id=" + id + ", ports=" + ports + ", stagedAt=" + stagedAt + ", startedAt=" + startedAt + ", version=" + version + '}';
     }
 
 }

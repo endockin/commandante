@@ -1,11 +1,9 @@
 package com.endockin.commandante.resource;
 
-import com.endockin.commandante.model.DockerShip;
-import com.endockin.commandante.model.Ship;
+import com.endockin.commandante.model.DockerFleet;
+import com.endockin.commandante.model.Fleet;
 import com.endockin.commandante.service.scheduler.SchedulerService;
 import com.endockin.commandante.service.scheduler.SchedulerServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,20 +17,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/ships")
-public class ShipResource {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ShipResource.class);
+@RequestMapping("/api/fleetResource")
+public class FleetResource {
 
     @Autowired
     private SchedulerService schedulerService;
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Ship>> getAll() {
+    public ResponseEntity<List<Fleet>> getAll() {
         try {
-            List<Ship> ships = schedulerService.findAll();
+            List<Fleet> fleets = schedulerService.findAll();
 
-            return new ResponseEntity<>(ships, HttpStatus.OK);
+            return new ResponseEntity<>(fleets, HttpStatus.OK);
         } catch (SchedulerServiceException ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -40,10 +36,10 @@ public class ShipResource {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Ship> get(@PathVariable String id) {
+    public ResponseEntity<Fleet> get(@PathVariable String id) {
         try {
-            Ship ship = schedulerService.find(id);
-            return new ResponseEntity<>(ship, HttpStatus.OK);
+            Fleet fleet = schedulerService.find(id);
+            return new ResponseEntity<>(fleet, HttpStatus.OK);
         } catch (SchedulerServiceException ex) {
             if (SchedulerServiceException.Type.NOT_FOUND.equals(ex.getType())) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -56,15 +52,15 @@ public class ShipResource {
     @RequestMapping(method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Ship> postDockerShip(@RequestBody DockerShip ship) {
+    public ResponseEntity<Fleet> postDockerShip(@RequestBody DockerFleet fleet) {
         //TODO create custom deserializer for ship type do not use explicit docker ship
         try {
-            return new ResponseEntity<>(schedulerService.schedule(ship), HttpStatus.OK);
+            return new ResponseEntity<>(schedulerService.schedule(fleet), HttpStatus.OK);
         } catch (SchedulerServiceException ex) {
             if (ex.getType() == SchedulerServiceException.Type.ALREADY_EXISTS) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
-            
+
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

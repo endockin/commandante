@@ -7,9 +7,6 @@ public class DockerContainerInfoDto {
 
     public static class PortMapping {
 
-        public PortMapping() {
-        }
-
         @JsonProperty("hostPort")
         private int hostPort = 0;
 
