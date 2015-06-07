@@ -1,27 +1,34 @@
 package com.endockin.commandante.service.impl.scheduler.marathon.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@XmlRootElement
 public class ContainerDto {
 
-  public ContainerDto() {
-  }
+    @JsonProperty("type")
+    private String type;
+    
+    @JsonProperty("docker")
+    private DockerContainerInfoDto dockerContainerInfoDto;
 
-  private String type;
+    public String getType() {
+        return type;
+    }
 
-  public String getType() {
-    return type;
-  }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-  public void setType(String type) {
-    this.type = type;
-  }
+    public DockerContainerInfoDto getDockerContainerInfoDto() {
+        return dockerContainerInfoDto;
+    }
 
-  @Override
-  public String toString() {
-    return "ContainerDto{" +
-      "type='" + type + '\'' +
-      '}';
-  }
+    public void setDockerContainerInfoDto(DockerContainerInfoDto dockerContainerInfoDto) {
+        this.dockerContainerInfoDto = dockerContainerInfoDto;
+    }
+
+    @Override
+    public String toString() {
+        return "ContainerDto{" + "type=" + type + ", dockerContainerInfoDto=" + dockerContainerInfoDto + '}';
+    }
+
 }

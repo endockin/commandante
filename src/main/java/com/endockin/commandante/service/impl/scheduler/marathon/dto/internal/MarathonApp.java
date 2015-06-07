@@ -1,4 +1,6 @@
-package com.endockin.commandante.service.impl.scheduler.marathon.dto;
+package com.endockin.commandante.service.impl.scheduler.marathon.dto.internal;
+
+import com.endockin.commandante.service.impl.scheduler.marathon.dto.ContainerDto;
 
 public class MarathonApp {
 

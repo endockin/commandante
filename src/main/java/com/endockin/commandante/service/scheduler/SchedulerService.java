@@ -10,9 +10,9 @@ import java.util.List;
  */
 public interface SchedulerService {
 
-    void schedule(Ship ship) throws SchedulerServiceException;
+    Ship schedule(Ship ship) throws SchedulerServiceException;
 
-    List<Ship> getAll() throws SchedulerServiceException;
+    List<Ship> findAll() throws SchedulerServiceException;
 
-    Ship get(String id) throws SchedulerServiceException;
+    Ship find(String id) throws SchedulerServiceException;
 }

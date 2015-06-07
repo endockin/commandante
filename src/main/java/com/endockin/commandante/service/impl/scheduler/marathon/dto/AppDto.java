@@ -1,5 +1,6 @@
 package com.endockin.commandante.service.impl.scheduler.marathon.dto;
 
+import com.endockin.commandante.service.impl.scheduler.marathon.dto.internal.MarathonApp;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AppDto {

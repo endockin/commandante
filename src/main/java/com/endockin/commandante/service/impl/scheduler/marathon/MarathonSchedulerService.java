@@ -3,6 +3,7 @@ package com.endockin.commandante.service.impl.scheduler.marathon;
 import com.endockin.commandante.model.Ship;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.AppDto;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.AppsDto;
+import com.endockin.commandante.service.impl.scheduler.marathon.dto.internal.MarathonApp;
 import com.endockin.commandante.service.scheduler.SchedulerServiceException;
 import com.endockin.commandante.service.scheduler.SchedulerService;
 import org.slf4j.Logger;
@@ -31,12 +32,28 @@ public class MarathonSchedulerService implements SchedulerService {
     private MarathonConverter converter;
 
     @Override
-    public void schedule(Ship ship) throws SchedulerServiceException {
-        RestTemplate restTemplate = new RestTemplate();
+    public Ship schedule(Ship ship) throws SchedulerServiceException {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<MarathonApp> result = restTemplate.postForEntity(
+                    getURI(MARATHON_ROOT, MarathonResource.APPS), converter.getMarathonApp(ship), MarathonApp.class);
+
+            return converter.getShip(result.getBody());
+        } catch (HttpStatusCodeException hsce) {
+            if (hsce.getStatusCode() == HttpStatus.CONFLICT) {
+                LOG.warn("Trouble scheduling ship [" + ship + "]. Already exists.", hsce);
+                throw new SchedulerServiceException("Ship already exists.", SchedulerServiceException.Type.ALREADY_EXISTS);
+            }
+
+            throw new SchedulerServiceException(hsce.getMessage(), SchedulerServiceException.Type.OTHER);
+        } catch (RestClientException rce) {
+            LOG.warn("Trouble scheduling ship [" + ship + "]", rce);
+            throw new SchedulerServiceException(rce.getMessage(), SchedulerServiceException.Type.OTHER);
+        }
     }
 
     @Override
-    public List<Ship> getAll() throws SchedulerServiceException {
+    public List<Ship> findAll() throws SchedulerServiceException {
         try {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<AppsDto> result = restTemplate.getForEntity(getURI(MARATHON_ROOT, MarathonResource.APPS),
@@ -46,12 +63,12 @@ public class MarathonSchedulerService implements SchedulerService {
                     collect(Collectors.toCollection(() -> new LinkedList<>()));
         } catch (RestClientException rce) {
             LOG.warn("Trouble getting all ships from Marathon", rce);
-            throw new SchedulerServiceException(rce.getMessage());
+            throw new SchedulerServiceException(rce.getMessage(), SchedulerServiceException.Type.OTHER);
         }
     }
 
     @Override
-    public Ship get(String id) throws SchedulerServiceException {
+    public Ship find(String id) throws SchedulerServiceException {
         try {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<AppDto> result = restTemplate.getForEntity(getURI(MARATHON_ROOT, MarathonResource.APPS) + "/" + id,
@@ -60,14 +77,14 @@ public class MarathonSchedulerService implements SchedulerService {
             return converter.getShip(result.getBody().getMarathonApp());
         } catch (HttpStatusCodeException hsce) {
             if (hsce.getStatusCode() == HttpStatus.NOT_FOUND) {
-                return null;
+                throw new SchedulerServiceException("Ship [" + id + "] not found.", SchedulerServiceException.Type.NOT_FOUND);
             }
 
             LOG.warn("Trouble getting ship with id [" + id + "] from Marathon", hsce);
-            throw new SchedulerServiceException(hsce.getMessage());
+            throw new SchedulerServiceException(hsce.getMessage(), SchedulerServiceException.Type.OTHER);
         } catch (RestClientException rce) {
             LOG.warn("Trouble getting ship with id [" + id + "] from Marathon", rce);
-            throw new SchedulerServiceException(rce.getMessage());
+            throw new SchedulerServiceException(rce.getMessage(), SchedulerServiceException.Type.OTHER);
         }
     }
 
