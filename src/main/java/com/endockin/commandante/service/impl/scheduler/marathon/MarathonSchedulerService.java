@@ -6,6 +6,8 @@ import com.endockin.commandante.service.impl.scheduler.marathon.dto.AppsDto;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.internal.MarathonApp;
 import com.endockin.commandante.service.scheduler.SchedulerServiceException;
 import com.endockin.commandante.service.scheduler.SchedulerService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
+import org.mapstruct.Mapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
@@ -39,17 +43,11 @@ public class MarathonSchedulerService implements SchedulerService {
                     getURI(MARATHON_ROOT, MarathonResource.APPS), converter.getMarathonApp(ship), MarathonApp.class);
 
             return converter.getShip(result.getBody());
-        } catch (HttpStatusCodeException hsce) {
-            if (hsce.getStatusCode() == HttpStatus.CONFLICT) {
-                LOG.warn("Trouble scheduling ship [" + ship + "]. Already exists.", hsce);
-                throw new SchedulerServiceException("Ship already exists.", SchedulerServiceException.Type.ALREADY_EXISTS);
-            }
-
-            throw new SchedulerServiceException(hsce.getMessage(), SchedulerServiceException.Type.OTHER);
         } catch (RestClientException rce) {
-            LOG.warn("Trouble scheduling ship [" + ship + "]", rce);
-            throw new SchedulerServiceException(rce.getMessage(), SchedulerServiceException.Type.OTHER);
+            handleRestClientException(rce);
+            return null;
         }
+
     }
 
     @Override
@@ -62,9 +60,10 @@ public class MarathonSchedulerService implements SchedulerService {
             return result.getBody().getMarathonApps().stream().map(converter::getShip).
                     collect(Collectors.toCollection(() -> new LinkedList<>()));
         } catch (RestClientException rce) {
-            LOG.warn("Trouble getting all ships from Marathon", rce);
-            throw new SchedulerServiceException(rce.getMessage(), SchedulerServiceException.Type.OTHER);
+            handleRestClientException(rce);
+            return null;
         }
+
     }
 
     @Override
@@ -75,17 +74,26 @@ public class MarathonSchedulerService implements SchedulerService {
                     AppDto.class);
 
             return converter.getShip(result.getBody().getMarathonApp());
-        } catch (HttpStatusCodeException hsce) {
-            if (hsce.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new SchedulerServiceException("Ship [" + id + "] not found.", SchedulerServiceException.Type.NOT_FOUND);
-            }
-
-            LOG.warn("Trouble getting ship with id [" + id + "] from Marathon", hsce);
-            throw new SchedulerServiceException(hsce.getMessage(), SchedulerServiceException.Type.OTHER);
         } catch (RestClientException rce) {
-            LOG.warn("Trouble getting ship with id [" + id + "] from Marathon", rce);
-            throw new SchedulerServiceException(rce.getMessage(), SchedulerServiceException.Type.OTHER);
+            handleRestClientException(rce);
+            return null;
         }
+    }
+
+    private static void handleRestClientException(RestClientException e) throws SchedulerServiceException {
+        if (e instanceof HttpStatusCodeException) {
+            HttpStatusCodeException hsce = (HttpStatusCodeException) e;
+            LOG.info("Marathon request failed with HttpStatusCodeException. \n" + hsce.getResponseBodyAsString());
+
+            if (hsce.getStatusCode() == HttpStatus.NOT_FOUND) {
+                throw new SchedulerServiceException("Ship does not exist.", SchedulerServiceException.Type.NOT_FOUND);
+            } else if (hsce.getStatusCode() == HttpStatus.CONFLICT) {
+                throw new SchedulerServiceException("Ship already exists.", SchedulerServiceException.Type.ALREADY_EXISTS);
+            }
+        }
+
+        LOG.warn("Unhandled RestClientException from Marathon.");
+        throw new SchedulerServiceException(e.getMessage(), SchedulerServiceException.Type.OTHER);
     }
 
     private enum MarathonResource {

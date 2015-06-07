@@ -5,7 +5,10 @@ import com.endockin.commandante.model.MesosShip;
 import com.endockin.commandante.model.Ship;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.ContainerDto;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.DockerContainerInfoDto;
+import com.endockin.commandante.service.impl.scheduler.marathon.dto.DockerContainerInfoDto.PortMapping;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.internal.MarathonApp;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,7 +20,7 @@ public class MarathonConverter {
         String containerType = marathonApp.getContainer().getType();
         if (DockerShip.SHIP_TYPE.equals(containerType)) {
             ContainerDto containerDto = marathonApp.getContainer();
-            
+
             DockerShip dockerShip = new DockerShip();
             dockerShip.setImage(containerDto.getDockerContainerInfoDto().getImage());
 
@@ -52,6 +55,17 @@ public class MarathonConverter {
             container.setType(DockerShip.SHIP_TYPE);
             DockerContainerInfoDto dockerInfo = new DockerContainerInfoDto();
             dockerInfo.setImage(dockerShip.getImage());
+
+            List<PortMapping> portMappings = new ArrayList<>();
+            dockerShip.getPorts().stream().map((portNumber) -> {
+                PortMapping portMapping = new PortMapping();
+                portMapping.setContainerPort(portNumber);
+                return portMapping;
+            }).forEach((portMapping) -> {
+                portMappings.add(portMapping);
+            });
+            dockerInfo.setPortMappings(portMappings);
+
             container.setDockerContainerInfoDto(dockerInfo);
             app.setContainer(container);
         }
