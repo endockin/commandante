@@ -1,6 +1,5 @@
 package com.endockin.commandante.service.impl.scheduler.marathon.dto;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
@@ -89,6 +88,9 @@ public class DockerContainerInfoDto {
     @JsonProperty("portMappings")
     private List<PortMapping> portMappings;
 
+    @JsonProperty("network")
+    private String networkType = "BRIDGE";
+
     public String getImage() {
         return image;
     }
@@ -105,9 +107,17 @@ public class DockerContainerInfoDto {
         this.portMappings = portMappings;
     }
 
+    public String getNetworkType() {
+        return networkType;
+    }
+
+    public void setNetworkType(String networkType) {
+        this.networkType = networkType;
+    }
+
     @Override
     public String toString() {
-        return "DockerContainerInfoDto{" + "image=" + image + ", portMappings=" + portMappings + '}';
+        return "DockerContainerInfoDto{" + "image=" + image + ", portMappings=" + portMappings + ", networkType=" + networkType + '}';
     }
 
 }

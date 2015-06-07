@@ -6,8 +6,6 @@ import com.endockin.commandante.service.impl.scheduler.marathon.dto.AppsDto;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.internal.MarathonApp;
 import com.endockin.commandante.service.scheduler.SchedulerServiceException;
 import com.endockin.commandante.service.scheduler.SchedulerService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
-import org.mapstruct.Mapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
