@@ -1,19 +1,31 @@
 package com.endockin.commandante.service.impl.scheduler.marathon.dto.internal;
 
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.ContainerDto;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 public class MarathonApp {
 
+    @JsonProperty("id")
     private String id;
+
+    @JsonProperty("cmd")
     private String cmd;
+
+    @JsonProperty("instances")
     private Integer instances;
+
+    @JsonProperty("cpus")
     private Double cpus;
+
+    @JsonProperty("mem")
     private Double mem;
+
+    @JsonProperty("container")
     private ContainerDto container;
 
-    public MarathonApp() {
-
-    }
+    @JsonProperty("tasks")
+    private List<MarathonTask> tasks;
 
     public String getId() {
         return id;
@@ -63,15 +75,17 @@ public class MarathonApp {
         this.container = container;
     }
 
+    public List<MarathonTask> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<MarathonTask> tasks) {
+        this.tasks = tasks;
+    }
+
     @Override
     public String toString() {
-        return "AppDto{"
-                + "id='" + id + '\''
-                + ", cmd='" + cmd + '\''
-                + ", instances=" + instances
-                + ", cpus=" + cpus
-                + ", mem=" + mem
-                + ", container=" + container
-                + '}';
+        return "MarathonApp{" + "id=" + id + ", cmd=" + cmd + ", instances=" + instances + ", cpus=" + cpus + ", mem=" + mem + ", container=" + container + ", tasks=" + tasks + '}';
     }
+
 }

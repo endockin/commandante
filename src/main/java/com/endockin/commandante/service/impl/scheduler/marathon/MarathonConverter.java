@@ -1,7 +1,8 @@
 package com.endockin.commandante.service.impl.scheduler.marathon;
 
-import com.endockin.commandante.model.DockerShip;
-import com.endockin.commandante.model.MesosShip;
+import com.endockin.commandante.model.DockerFleet;
+import com.endockin.commandante.model.MesosFleet;
+import com.endockin.commandante.model.Fleet;
 import com.endockin.commandante.model.Ship;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.ContainerDto;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.DockerContainerInfoDto;
@@ -14,33 +15,49 @@ import org.springframework.stereotype.Component;
 @Component
 public class MarathonConverter {
 
-    public Ship getShip(MarathonApp marathonApp) {
-        Ship ship = null;
+    public Fleet getFleet(MarathonApp marathonApp) {
+        Fleet fleet = null;
 
         String containerType = marathonApp.getContainer().getType();
-        if (DockerShip.SHIP_TYPE.equals(containerType)) {
+        if (DockerFleet.FLEET_TYPE.equals(containerType)) {
             ContainerDto containerDto = marathonApp.getContainer();
 
-            DockerShip dockerShip = new DockerShip();
-            dockerShip.setImage(containerDto.getDockerContainerInfoDto().getImage());
+            DockerFleet dockerFleet = new DockerFleet();
+            dockerFleet.setImage(containerDto.getDockerContainerInfoDto().getImage());
 
-            ship = dockerShip;
-        } else if (MesosShip.SHIP_TYPE.equals(containerType)) {
-            ship = new MesosShip();
+            fleet = dockerFleet;
+        } else {
+            fleet = new MesosFleet();
         }
 
-        if (ship != null) {
-            ship.setId(marathonApp.getId());
-            ship.setCommand(marathonApp.getCmd());
-            ship.setCpu(marathonApp.getCpus());
-            ship.setMemory(marathonApp.getMem());
-            ship.setInstanceNumber(marathonApp.getInstances());
+        if (marathonApp.getTasks() != null) {
+            List<Ship> ships = new ArrayList<>();
+            marathonApp.getTasks().stream().map((task) -> {
+                Ship ship = new Ship();
+                ship.setAppId(task.getAppId());
+                ship.setHost(task.getHost());
+                ship.setId(task.getId());
+                ship.setPorts(task.getPorts());
+                ship.setStagedAt(task.getStagedAt());
+                ship.setStartedAt(task.getStartedAt());
+                ship.setVersion(task.getVersion());
+                return ship;
+            }).forEach((ship) -> {
+                ships.add(ship);
+            });
+            fleet.setShips(ships);
         }
 
-        return ship;
+        fleet.setId(marathonApp.getId());
+        fleet.setCommand(marathonApp.getCmd());
+        fleet.setCpu(marathonApp.getCpus());
+        fleet.setMemory(marathonApp.getMem());
+        fleet.setInstanceNumber(marathonApp.getInstances());
+
+        return fleet;
     }
 
-    public MarathonApp getMarathonApp(Ship ship) {
+    public MarathonApp getMarathonApp(Fleet ship) {
         MarathonApp app = new MarathonApp();
         app.setId(ship.getId());
         app.setCmd(ship.getCommand());
@@ -48,16 +65,16 @@ public class MarathonConverter {
         app.setInstances(ship.getInstanceNumber());
         app.setMem(ship.getMemory());
 
-        if (DockerShip.SHIP_TYPE.equals(ship.getType())) {
-            DockerShip dockerShip = (DockerShip) ship;
+        if (DockerFleet.FLEET_TYPE.equals(ship.getType())) {
+            DockerFleet dockerFleet = (DockerFleet) ship;
             ContainerDto container = new ContainerDto();
 
-            container.setType(DockerShip.SHIP_TYPE);
+            container.setType(DockerFleet.FLEET_TYPE);
             DockerContainerInfoDto dockerInfo = new DockerContainerInfoDto();
-            dockerInfo.setImage(dockerShip.getImage());
+            dockerInfo.setImage(dockerFleet.getImage());
 
             List<PortMapping> portMappings = new ArrayList<>();
-            dockerShip.getPorts().stream().map((portNumber) -> {
+            dockerFleet.getPorts().stream().map((portNumber) -> {
                 PortMapping portMapping = new PortMapping();
                 portMapping.setContainerPort(portNumber);
                 return portMapping;

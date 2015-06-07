@@ -1,6 +1,6 @@
 package com.endockin.commandante.service.impl.scheduler.marathon;
 
-import com.endockin.commandante.model.Ship;
+import com.endockin.commandante.model.Fleet;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.AppDto;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.AppsDto;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.internal.MarathonApp;
@@ -32,13 +32,13 @@ public class MarathonSchedulerService implements SchedulerService {
     private MarathonConverter converter;
 
     @Override
-    public Ship schedule(Ship ship) throws SchedulerServiceException {
+    public Fleet schedule(Fleet ship) throws SchedulerServiceException {
         try {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<MarathonApp> result = restTemplate.postForEntity(
                     getURI(MARATHON_ROOT, MarathonResource.APPS), converter.getMarathonApp(ship), MarathonApp.class);
 
-            return converter.getShip(result.getBody());
+            return converter.getFleet(result.getBody());
         } catch (RestClientException rce) {
             handleRestClientException(rce);
             return null;
@@ -47,13 +47,13 @@ public class MarathonSchedulerService implements SchedulerService {
     }
 
     @Override
-    public List<Ship> findAll() throws SchedulerServiceException {
+    public List<Fleet> findAll() throws SchedulerServiceException {
         try {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<AppsDto> result = restTemplate.getForEntity(getURI(MARATHON_ROOT, MarathonResource.APPS),
                     AppsDto.class);
 
-            return result.getBody().getMarathonApps().stream().map(converter::getShip).
+            return result.getBody().getMarathonApps().stream().map(converter::getFleet).
                     collect(Collectors.toCollection(() -> new LinkedList<>()));
         } catch (RestClientException rce) {
             handleRestClientException(rce);
@@ -63,13 +63,13 @@ public class MarathonSchedulerService implements SchedulerService {
     }
 
     @Override
-    public Ship find(String id) throws SchedulerServiceException {
+    public Fleet find(String id) throws SchedulerServiceException {
         try {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<AppDto> result = restTemplate.getForEntity(getURI(MARATHON_ROOT, MarathonResource.APPS) + "/" + id,
                     AppDto.class);
 
-            return converter.getShip(result.getBody().getMarathonApp());
+            return converter.getFleet(result.getBody().getMarathonApp());
         } catch (RestClientException rce) {
             handleRestClientException(rce);
             return null;

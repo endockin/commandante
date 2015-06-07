@@ -1,18 +1,14 @@
 package com.endockin.commandante.service.scheduler;
 
-import com.endockin.commandante.model.Ship;
+import com.endockin.commandante.model.Fleet;
 
 import java.util.List;
 
-/**
- *
- * @author mate
- */
 public interface SchedulerService {
 
-    Ship schedule(Ship ship) throws SchedulerServiceException;
+    Fleet schedule(Fleet fleet) throws SchedulerServiceException;
 
-    List<Ship> findAll() throws SchedulerServiceException;
+    List<Fleet> findAll() throws SchedulerServiceException;
 
-    Ship find(String id) throws SchedulerServiceException;
+    Fleet find(String id) throws SchedulerServiceException;
 }
