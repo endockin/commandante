@@ -1,27 +1,29 @@
 package com.endockin.commandante.service.impl.scheduler.marathon.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public class AppsDto {
 
-  private List<AppDto> apps;
+    
+    @JsonProperty("apps")
+    private List<MarathonApp> marathonApps;
 
-  public AppsDto() {
+    public AppsDto() {
 
-  }
+    }
 
-  public List<AppDto> getApps() {
-    return apps;
-  }
+    public List<MarathonApp> getMarathonApps() {
+        return marathonApps;
+    }
 
-  public void setApps(List<AppDto> apps) {
-    this.apps = apps;
-  }
+    public void setMarathonApps(List<MarathonApp> marathonApps) {
+        this.marathonApps = marathonApps;
+    }
 
-  @Override
-  public String toString() {
-    return "AppsDto{" +
-      "apps=" + apps +
-      '}';
-  }
+    @Override
+    public String toString() {
+        return "AppsDto{" + "marathonApps=" + marathonApps + '}';
+    }
+
 }

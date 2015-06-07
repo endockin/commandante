@@ -17,12 +17,14 @@
   <logger name="sun.net.www.protocol.http.HttpURLConnection" level="WARN"/>
   <logger name="com.wordnik.swagger" level="WARN"/>
   <logger name="com.mangofactory" level="WARN"/>
-
+  <logger name="springfox.documentation" level="WARN"/>
+<logger name="javax.activation" level="WARN"/>
+  
   <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
     <resetJUL>true</resetJUL>
   </contextListener>
 
-  <root level="DEBUG">
+  <root level="WARN">
     <appender-ref ref="CONSOLE"/>
   </root>
 
