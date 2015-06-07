@@ -1,0 +1,9 @@
+{
+  "generator-java": {
+    "title": "Commandante",
+    "description": "",
+    "author": "Mate-Laszlo Lang",
+    "email": "langmatelaszlo@gmail.com",
+    "namespace": "com.endockin.commandante"
+  }
+}
