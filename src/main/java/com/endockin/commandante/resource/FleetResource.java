@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/api/fleetResource")
+@RequestMapping("/api/fleet")
 public class FleetResource {
 
     @Autowired

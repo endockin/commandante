@@ -1,4 +1,4 @@
-package com.endockin.commandante.configuration;
+package com.endockin.commandante.config;
 
 import com.google.common.base.Predicate;
 import static com.google.common.base.Predicates.or;
