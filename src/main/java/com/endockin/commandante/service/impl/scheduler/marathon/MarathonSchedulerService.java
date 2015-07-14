@@ -88,7 +88,7 @@ public class MarathonSchedulerService implements SchedulerService {
             }
         }
 
-        LOG.warn("Unhandled RestClientException from Marathon.");
+        LOG.warn("Unhandled RestClientException from Marathon.", e);
         throw new SchedulerServiceException(e.getMessage(), SchedulerServiceException.Type.OTHER);
     }
 
