@@ -24,7 +24,7 @@ import org.springframework.web.client.RestClientException;
 public class MarathonSchedulerService implements SchedulerService {
 
     //TODO: determine URL based on service discovery instead of hardcoding.
-    private static final String MARATHON_ROOT = "http://endockin-master1:8080";
+    private static final String MARATHON_ROOT = "http://rocj-inolab-d01:8080";
     private static final MarathonVersion MARATHON_VERSION = MarathonVersion.V2;
     private static final Logger LOG = LoggerFactory.getLogger(MarathonSchedulerService.class);
 
