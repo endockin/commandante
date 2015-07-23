@@ -1,24 +1,25 @@
 package com.endockin.commandante.service.impl.scheduler.marathon;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
 import com.endockin.commandante.model.Fleet;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.AppDto;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.AppsDto;
 import com.endockin.commandante.service.impl.scheduler.marathon.dto.internal.MarathonApp;
-import com.endockin.commandante.service.scheduler.SchedulerServiceException;
 import com.endockin.commandante.service.scheduler.SchedulerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClientException;
+import com.endockin.commandante.service.scheduler.SchedulerServiceException;
 
 @Service
 public class MarathonSchedulerService implements SchedulerService {
@@ -78,6 +79,17 @@ public class MarathonSchedulerService implements SchedulerService {
 		} catch (RestClientException rce) {
 			handleRestClientException(rce);
 			return null;
+		}
+	}
+
+	@Override
+	public void delete(String id) throws SchedulerServiceException {
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			restTemplate.delete(getURI(MARATHON_ROOT, MarathonResource.APPS)
+					+ "/" + id, AppDto.class);
+		} catch (RestClientException rce) {
+			handleRestClientException(rce);
 		}
 	}
 
