@@ -20,49 +20,62 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/api/fleet")
 public class FleetResource {
 
-    @Autowired
-    private SchedulerService schedulerService;
+	@Autowired
+	private SchedulerService schedulerService;
 
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Fleet>> getAll() {
-        try {
-            List<Fleet> fleets = schedulerService.findAll();
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Fleet>> getAll() {
+		try {
+			List<Fleet> fleets = schedulerService.findAll();
 
-            return new ResponseEntity<>(fleets, HttpStatus.OK);
-        } catch (SchedulerServiceException ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+			return new ResponseEntity<>(fleets, HttpStatus.OK);
+		} catch (SchedulerServiceException ex) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Fleet> get(@PathVariable String id) {
-        try {
-            Fleet fleet = schedulerService.find(id);
-            return new ResponseEntity<>(fleet, HttpStatus.OK);
-        } catch (SchedulerServiceException ex) {
-            if (SchedulerServiceException.Type.NOT_FOUND.equals(ex.getType())) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Fleet> get(@PathVariable String id) {
+		try {
+			Fleet fleet = schedulerService.find(id);
+			return new ResponseEntity<>(fleet, HttpStatus.OK);
+		} catch (SchedulerServiceException ex) {
+			if (SchedulerServiceException.Type.NOT_FOUND.equals(ex.getType())) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
-    @RequestMapping(method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Fleet> postDockerShip(@RequestBody DockerFleet fleet) {
-        //TODO create custom deserializer for ship type do not use explicit docker ship
-        try {
-            return new ResponseEntity<>(schedulerService.schedule(fleet), HttpStatus.OK);
-        } catch (SchedulerServiceException ex) {
-            if (ex.getType() == SchedulerServiceException.Type.ALREADY_EXISTS) {
-                return new ResponseEntity<>(HttpStatus.CONFLICT);
-            }
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> delete(@PathVariable String id) {
+		try {
+			schedulerService.delete(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (SchedulerServiceException ex) {
+			if (SchedulerServiceException.Type.NOT_FOUND.equals(ex.getType())) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Fleet> postDockerShip(@RequestBody DockerFleet fleet) {
+		// TODO create custom deserializer for ship type do not use explicit
+		// docker ship
+		try {
+			return new ResponseEntity<>(schedulerService.schedule(fleet),
+					HttpStatus.OK);
+		} catch (SchedulerServiceException ex) {
+			if (ex.getType() == SchedulerServiceException.Type.ALREADY_EXISTS) {
+				return new ResponseEntity<>(HttpStatus.CONFLICT);
+			}
+
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 }
